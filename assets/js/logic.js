@@ -1,108 +1,114 @@
-// save reference to important DOM elements
-var timeDisplayEl = $("#time-display");
-var projectDisplayEl = $("#project-display");
-var projectModalEl = $("#project-modal");
-var projectFormEl = $("#project-form");
-var projectNameInputEl = $("#project-name-input");
-var projectTypeInputEl = $("#project-type-input");
-var hourlyRateInputEl = $("#hourly-rate-input");
-var dueDateInputEl = $("#due-date-input");
+let grabCurrentDate = moment().format('MMMM Do, YYYY');
+let grabCurrentHour = moment().format('h a');
+let buttons = document.querySelectorAll('.saveBtn')
+let userInput = document.querySelectorAll('.user-input')
+let timeBlock = document.querySelectorAll('.time-block')
 
-// handle displaying the time
-function displayTime() {
-  var rightNow = moment().format("MMM DD, YYYY [at] hh:mm:ss a");
-  timeDisplayEl.text(rightNow);
+renderInput();
+
+// Using jquery to set the currentDay text content to grabCurrentDate
+$('#currentDay').text(grabCurrentDate);
+
+// Using jquery and event delegation to handle all the buttons
+$('#container').on('click', function(targ) {
+    // If the target (clicked element) is a button
+    if (targ.target && targ.target.matches('.saveBtn')) {
+        // console check
+        // console.log('I was clicked!')
+
+        // grabbing the clicked btn's block value
+        btnBlockValue = targ.target.dataset.block;
+        
+        // Looping over all input fields and matching it's block value with current button
+        for (var i = 0; i < userInput.length; i++) {
+            // if the userInput block value is equal to the btn block value
+            if (userInput[i].dataset.block === btnBlockValue) {
+                // concatenating to make a dynamic storage item name based on its block value
+                localStorage.setItem('userInput' + userInput[i].dataset.block, userInput[i].textContent)
+            }
+        }
+        location.reload();
+    }
+
+    if (targ.target && targ.target.matches('.clear')) {
+        localStorage.clear();
+
+        // Loops over all userInput fields and clears them
+        for (var i = 0; i < userInput.length; i++) {
+            userInput[i].textContent = "";
+        }
+        location.reload();
+    }
+})
+
+// Grabs local storage items and renders it onto the userInput box
+function renderInput() {
+    // Looping over userInput fields
+    for (var i = 0; i < userInput.length; i++) {
+        userInputBlock = userInput[i].dataset.block;
+
+        // Getting the userInput local storage item based on the current field input block value
+        userInputValue = localStorage.getItem('userInput' + userInputBlock)
+
+        // If the current item in the local storage doesn't exist, skip current iteration.
+        if (userInputValue === undefined || userInputValue === null) {
+            continue;
+        }
+        // Setting the text content of current input field
+        userInput[i].textContent = userInputValue;
+    };
 }
 
-// handle printing project data to the page
-function printProjectData(name, type, hourlyRate, dueDate) {
-  var projectRowEl = $("<tr>");
+let militaryHour = parseInt(grabCurrentHour.slice(0, 2));
+// Check to see if military hour is an integer and is sliced properly
+// console.log(militaryHour)
 
-  var projectNameTdEl = $("<td>").addClass("p-2").text(name);
-
-  var projectTypeTdEl = $("<td>").addClass("p-2").text(type);
-
-  var rateTdEl = $("<td>").addClass("p-2").text(hourlyRate);
-
-  var dueDateTdEl = $("<td>").addClass("p-2").text(dueDate);
-
-  var daysToDate = moment(dueDate, "MM/DD/YYYY").diff(moment(), "days");
-  var daysLeftTdEl = $("<td>").addClass("p-2").text(daysToDate);
-
-  var totalEarnings = calculateTotalEarnings(hourlyRate, daysToDate);
-
-  // You can also chain methods onto new lines to keep code clean
-  var totalTdEl = $("<td>")
-    .addClass("p-2")
-    .text("$" + totalEarnings);
-
-  var deleteProjectBtn = $("<td>")
-    .addClass("p-2 delete-project-btn text-center")
-    .text("X");
-
-  // By listing each `<td>` variable as an argument, each one will be appended in that order
-  projectRowEl.append(
-    projectNameTdEl,
-    projectTypeTdEl,
-    rateTdEl,
-    dueDateTdEl,
-    daysLeftTdEl,
-    totalTdEl,
-    deleteProjectBtn
-  );
-
-  projectDisplayEl.append(projectRowEl);
-
-  projectModalEl.modal("hide");
+// Switch Statements to convert normal hours to military time
+switch (grabCurrentHour) {
+    case '12 am':
+        militaryHour = 0;
+        console.log('It is currently ' + militaryHour + ' hours');
+        break;
+    case '1 pm':
+    case '2 pm':
+    case '3 pm':
+    case '4 pm':
+    case '5 pm':
+    case '6 pm':
+    case '7 pm':
+    case '8 pm':
+    case '9 pm':
+    case '10 pm':
+    case '11 pm':
+        militaryHour += 12;
+        console.log('It is currently ' + militaryHour + ' hours')
+        break;
+    // The default statement for 1-11am
+    default:
+        console.log('It is currently ' + militaryHour + ' hours');
+        break;
 }
 
-function calculateTotalEarnings(rate, days) {
-  var dailyTotal = rate * 8;
-  var total = dailyTotal * days;
-  return total;
-}
+// Needs to be initiated after switch statements
+currentHour();
 
-function handleDeleteProject(event) {
-  console.log(event.target);
-  var btnClicked = $(event.target);
-  btnClicked.parent("tr").remove();
-}
+// function that sets the classes of each timeblock depending on what time it is
+function currentHour() {
+    // Loops over the time blocks and sets classes past future or present
+    for (var i = 0; i < timeBlock.length; i++) {
+        // If the current hour timeblock is the present
+        if (parseInt(timeBlock[i].dataset.hour) === militaryHour) {
+            timeBlock[i].setAttribute('id', 'present');
+            
+        // If the current timeblock is the past
+        } else if (parseInt(timeBlock[i].dataset.hour) < militaryHour) {
+            timeBlock[i].setAttribute('id', 'past');
 
-// handle project form submission
-function handleProjectFormSubmit(event) {
-  event.preventDefault();
-
-  var projectName = projectNameInputEl.val().trim();
-  var projectType = projectTypeInputEl.val().trim();
-  var hourlyRate = hourlyRateInputEl.val().trim();
-  var dueDate = dueDateInputEl.val().trim();
-
-  printProjectData(projectName, projectType, hourlyRate, dueDate);
-  saveInLocalStorage(projectName, projectType, hourlyRate, dueDate);
-  projectFormEl[0].reset();
-}
-
-projectFormEl.on("submit", handleProjectFormSubmit);
-projectDisplayEl.on("click", ".delete-project-btn", handleDeleteProject);
-dueDateInputEl.datepicker({ minDate: 1 });
-
-setInterval(displayTime, 1000);
-
-function saveInLocalStorage(name, type, hourly, due) {
-  //before doing the write, do a read
-  var savedProjects = localStorage.getItem("savedProject") || "[]"; //makes sure that you dont get null
-  console.log("your saved Projects", savedProjects);
-  var projectsParsed = JSON.parse(savedProjects);
-  console.log("your projects Parsed back into JS", projectsParsed);
-  //add new project to array of projects
-  projectsParsed.push({
-    name: name,
-    type: type,
-    hourly: hourly,
-    due: due,
-  });
-
-  console.log("your projects with new project added", projectsParsed);
-  //writing to localStorage
-  localStorage.setItem("savedProject", JSON.stringify(projectsParsed));
+        // If the current timeblock is the future
+        } else if (parseInt(timeBlock[i].dataset.hour) > militaryHour) {
+            timeBlock[i].setAttribute('id', 'future');
+        } else {
+            console.log('currentHour() needs added conditions')
+        }
+    }
 }

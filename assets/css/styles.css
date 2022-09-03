@@ -1,72 +1,80 @@
 body {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 16px;
-    line-height: 1;
-  }
-  
-  textarea {
-    background: transparent;
-    border: none;
-    resize: none;
-    color: #000000;
-    border-left: 1px solid black;
-    padding: 10px;
-  }
-  
-  .jumbotron {
-    text-align: center;
-    background-color: transparent;
-    color: black;
-    border-radius: 0;
-    border-bottom: 10px solid black;
-  }
-  
-  .description {
-    white-space: pre-wrap;
-  }
-  
-  .time-block {
-    text-align: center;
-    border-radius: 15px;
-  }
-  
-  .row {
-    white-space: pre-wrap;
-    height: 80px;
-    border-top: 1px solid white;
-  }
-  
-  .hour {
-    background-color: #ffffff;
-    color: #000000;
-    border-top: 1px dashed #000000;
-  }
-  
-  .past {
-    background-color: #d3d3d3;
-    color: white;
-  }
-  
-  .present {
-    background-color: #ff6961;
-    color: white;
-  }
-  
-  .future {
-    background-color: #77dd77;
-    color: white;
-  }
-  
-  .saveBtn {
-    border-left: 1px solid black;
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
-    background-color: #06aed5;
-    color: white;
-  }
-  
-  .saveBtn i:hover {
-    font-size: 20px;
-    transition: all 0.3s ease-in-out;
-  }
-  
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.jumbotron {
+  text-align: center;
+  background-color: transparent;
+  color: black;
+  border-radius: 0;
+  border-bottom: 10px solid black;
+}
+
+.description {
+  white-space: pre-wrap;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-block {
+  text-align: center;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: .5em;
+  width: 50vw;
+}
+
+.hour {
+  height: 6em;
+  width: 8em;
+  padding: 2em;
+  border-top: 1px solid black;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#past {
+  background-color: #d3d3d3;
+}
+
+#present {
+  background-color: #ffa5a0;
+}
+
+#future {
+  background-color: #b4e2b4;
+}
+
+.saveBtn {
+  border: none;
+  border-radius: 0 1em 1em 0;
+  background-color: lightblue;
+  background-image: url("https://iconarchive.com/download/i103415/paomedia/small-n-flat/floppy.ico");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 6em;
+  height: 6em;
+  min-width: 6em;
+  min-height: 6em;
+}   
+
+.user-input {
+  height: 6em;
+  width: 35vw;
+  padding: 1em;
+  border: 1px solid black;
+  text-align: left;
+  margin-top: 1em;
+  overflow: auto;
+}
